@@ -6,6 +6,27 @@ Note: I am in the process of cleaning up the code and adding to the repository. 
 
 1. Comparison methods
 2. Least squares integrator
-3. ... check back soon for more!
+3. Polarimetric image decomposition
+4. ... check back soon for more!
 
-I will add documentation and demo scripts once I have uploaded all of the code.
+I will add documentation and demo scripts as I upload the code.
+
+## Polarimetric image decomposition
+
+The first thing you need to do is convert your captured image into a 3-channel polarisation image. The function that does this is PolarisationImage.m. Inputs are:
+
+1. images - 3D array containing captured images of size rows by cols by nimages
+2. angles - vector of length nimages containing polariser angles (I use a coordinate system where the polariser angle is measured from the upward vertical axis, increasing in a clockwise direction if viewed looking into the camera lens)
+3. (optional) mask - binary foreground mask of size rows by cols
+4. (optional) method - either 'linear' or 'nonlinear', default: linear
+
+It returns rho (degree of polarisation), phi (phase angle) and Iun (unpolarised intensity).
+
+Sample call:
+
+```matlab
+[ rho,phi,Iun ] = PolarisationImages( images,angles,mask,'linear' );
+figure; imagesc(rho); colorbar
+figure; imagesc(phi); colorbar
+figure; imshow(Iun)
+```
