@@ -7,6 +7,9 @@ Note: I am in the process of cleaning up the code and adding to the repository. 
 1. Comparison methods
 2. Least squares integrator
 3. Polarimetric image decomposition
+4. Diffuse polarisation model (degree of polarisation to zenith angle)
+5. Light source estimation
+6. Height from polarisation
 
 Still to add:
 
