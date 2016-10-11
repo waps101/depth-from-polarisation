@@ -30,3 +30,30 @@ figure; imagesc(rho); colorbar
 figure; imagesc(phi); colorbar
 figure; imshow(Iun)
 ```
+
+## Convert degree of polarisation to zenith angle
+
+For the time being, I only include the diffuse polarisation model. So to convert the degree of polarisation (rho) to a zenith angle, you simply do:
+
+```matlab
+theta = rho_diffuse(rho,n);
+```
+
+where n is the index of refraction (we use n=1.5 in the paper).
+
+## Light source estimation
+
+If you do not know your light source direction (or if you know it, but don't know the light source intensity/uniform albedo) then the next thing you need to do is estimate it. This is done using the findLight function. It can estimate point source or spherical harmonic order 1 or 2 lighting. A basic call for point source lighting where you don't know the direction would be:
+
+```matlab
+[ l,T,B ] = findLight( theta,phi,diffuse,mask,3 );
+```
+
+Alternatively, if you know the direction is [1 0 1] but need to scale to account for unknown intensity/albedo, then do:
+
+```matlab
+l = [1 0 1]'./norm([1 0 1]);
+[ l,T,B ] = findLight( theta,phi,diffuse,mask,3,l );
+```
+
+For other options and spherical harmonic lighting, see the documentation.
