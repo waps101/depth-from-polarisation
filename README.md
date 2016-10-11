@@ -1,13 +1,19 @@
 # Linear depth estimation from an uncalibrated, monocular polarisation image
 
-This is a Matlab implementation of our ECCV 2016 paper "Linear depth estimation from an uncalibrated, monocular polarisation image". It also includes an implementation of polarimetric image decomposition (linear and nonlinear optimisation), two comparison shape-from-polarisation methods, a simple least squares surface integration method (with foreground mask) and a basic method for pixel-wise specular labelling.
+This is a Matlab implementation of our ECCV 2016 paper "Linear depth estimation from an uncalibrated, monocular polarisation image". It also includes an implementation of polarimetric image decomposition (linear and nonlinear optimisation), two comparison shape-from-polarisation methods, a simple least squares surface integration method (which supports a foreground mask) and a basic method for pixel-wise specular labelling.
 
 Note: I am in the process of cleaning up the code and adding to the repository. I will update the list of what has been uploaded as I go along. Content included so far:
 
 1. Comparison methods
 2. Least squares integrator
 3. Polarimetric image decomposition
-4. ... check back soon for more!
+
+Still to add:
+
+1. Specular model, specular labelling
+2. Boundary prior (computing boundary azimuth and weight)
+3. Sample datasets
+4. Code for generating synthetic datasets and evaluating
 
 I will add documentation and demo scripts as I upload the code.
 
@@ -57,3 +63,17 @@ l = [1 0 1]'./norm([1 0 1]);
 ```
 
 For other options and spherical harmonic lighting, see the documentation.
+
+## Computing depth
+
+Finally, we are ready to compute depth. Again, this is the most basic call assuming only diffuse pixels:
+
+```matlab
+[ height ] = HfPol( theta,diffuse,phi,l,mask );
+```
+
+To display the height map, you can do, for example:
+
+```matlab
+figure; surf(height'); axis equal
+```
