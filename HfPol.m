@@ -22,7 +22,7 @@ function [ height ] = HfPol( theta,diffuse,phi,l,mask,verbose,spec,azi,weight )
 
 % Note: this is a parameter - need to move this to options later
 % Smoothing weight. lambda=0 => no smoothing.
-lambda=0.2;
+lambda=0.1;
 
 if nargin<6
     verbose=true;
@@ -115,41 +115,61 @@ for row=1:rows
                 i(k)=NumEq; j(k)=indices(row+1,col); s(k)=1*lambda;
             end
             if nargin==9
-                maxeq = 4;
+                if spec(row,col)
+                    maxeq = 5;
+                else
+                    maxeq = 4;
+                end
             else
-                maxeq = 2;
+                if spec(row,col)
+                    maxeq = 3;
+                else
+                    maxeq = 2;
+                end
             end
             for eq=1:maxeq
                 
                 % Start by computing p and q weights and RHSs of eqs
-                if eq==1
-                    if spec(row,col)
+                if spec(row,col)
+                    if eq==1 % Half vector constraint
                         RHS = Hp;
                         xval = 1;
                         yval = 0;
-                    else % Phase angle constraint
-                        RHS = 0;
-                        xval = cos(phi(row,col));
-                        yval = -sin(phi(row,col));
-                    end
-                elseif eq==2
-                    if spec(row,col)
+                    elseif eq==2 % Half vector constraint
                         RHS = Hq;
                         xval = 0;
                         yval = 1;
-                    else % Ratio between DOP and Lambertian constraint
+                    elseif eq==3 % Phase angle constraint
+                        RHS = 0;
+                        xval = cos(phi(row,col));
+                        yval = -sin(phi(row,col));
+                    elseif eq==4 % Azimuth prior from boundary (weighted)
+                        RHS = -weight(row,col)*(sin(azi(row,col))*sin(theta(row,col)));
+                        xval = weight(row,col)*cos(theta(row,col));
+                        yval = 0;
+                    elseif eq==5 % Azimuth prior from boundary (weighted)
+                        RHS = -weight(row,col)*(cos(azi(row,col))*sin(theta(row,col)));
+                        xval = 0;
+                        yval = weight(row,col)*cos(theta(row,col));
+                    end
+                else
+                    if eq==1 % Phase angle constraint
+                        RHS = 0;
+                        xval = cos(phi(row,col));
+                        yval = -sin(phi(row,col));
+                    elseif eq==2 % Ratio between DOP and Lambertian constraint
                         RHS = diffuse(row,col)/f(row,col) - l(3);
                         xval = -l(1);
                         yval = -l(2);
+                    elseif eq==3 % Azimuth prior from boundary (weighted)
+                        RHS = -weight(row,col)*(sin(azi(row,col))*sin(theta(row,col)));
+                        xval = weight(row,col)*cos(theta(row,col));
+                        yval = 0;
+                    elseif eq==4 % Azimuth prior from boundary (weighted)
+                        RHS = -weight(row,col)*(cos(azi(row,col))*sin(theta(row,col)));
+                        xval = 0;
+                        yval = weight(row,col)*cos(theta(row,col));
                     end
-                elseif eq==3 % Azimuth prior from boundary (weighted)
-                    RHS = -weight(row,col)*(sin(azi(row,col))*sin(theta(row,col)));
-                    xval = weight(row,col)*cos(theta(row,col));
-                    yval = 0;
-                elseif eq==4 % Azimuth prior from boundary (weighted)
-                    RHS = -weight(row,col)*(cos(azi(row,col))*sin(theta(row,col)));
-                    xval = 0;
-                    yval = weight(row,col)*cos(theta(row,col));
                 end
                 
                 
